@@ -18,6 +18,91 @@ voiceGate = 0
 shiftMode = 0
 grainPosition = 0
 
+arcMode = 0
+
+
+REFRESH_RATE = 0.03
+
+
+key = function(n,z)
+  if n==2 then hold = z==1 and true or false
+  elseif n==3 and z==1 then mode = mode==1 and 2 or 1 end
+  redraw()
+end
+
+a = arc.connect()
+
+a.delta = function(n,d)
+  if n == 1 then
+    if d > 2 then arcMode = 1
+    elseif d < -2 then arcMode = 0 end
+  end
+  
+  if arcMode == 0 then
+    if n == 2 then
+      params:delta("1speed",d/2)
+    elseif n == 3 then
+      params:delta("1size",d/3) 
+    elseif n == 4 then
+      params:delta("1pitch",d/20) 
+    end
+  elseif arcMode == 1 then
+    if n == 2 then
+      params:delta("1jitter",d/3)
+    elseif n == 3 then
+      params:delta("1density",d/3) 
+    elseif n == 4 then
+      params:delta("1spread",d/3) 
+    end
+  end
+  
+  
+end
+
+arc_redraw = function()
+  a:all(0)
+  
+  if arcMode == 0 then
+    a:segment(1, -3, 0, 15)
+    
+    local speed = params:get("1speed") / 200
+    if speed > 0 then
+      a:segment(2,0.5,0.5+speed,15)
+    else
+      a:segment(2,speed-0.5,-0.5,15)
+    end
+  
+    local size = params:get("1size") / 100
+    a:segment(3, -2.5, -2.5 + size, 15)
+    
+    local pitch = params:get("1pitch") / 20
+    if pitch > 0 then
+      a:segment(4,0.5,0.5+pitch,15)
+    else
+      a:segment(4,pitch-0.5,-0.5,15)
+    end
+  elseif arcMode == 1 then
+    a:segment(1, 0, 3, 15)
+    local jitter = params:get("1jitter") / 100
+    local density = params:get("1density") / 100
+    local spread = params:get("1spread") / 20
+    
+    a:segment(2, -2.5, -2.5 + jitter, 15)
+    a:segment(3, -2.5, -2.5 + density, 15)
+    a:segment(4, -2.5, -2.5 + spread, 15)
+  end
+  
+  a:refresh()
+end
+
+re = metro.init()
+re.time = REFRESH_RATE
+re.event = function()
+  arc_redraw()
+end
+re:start()
+
+
 function init()
   
   local phase_poll = poll.set('phase_1', function(pos) grainPosition = pos end)
