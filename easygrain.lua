@@ -44,7 +44,7 @@ function init()
     params:add_taper(v.."volume", v..sep.."volume", -60, 20, 0, 0, "dB")
     params:set_action(v.."volume", function(value) engine.volume(v, math.pow(10, value / 20)) end)
 
-    params:add_taper(v.."speed", v..sep.."speed", -200, 200, 100, 0, "%")
+    params:add_taper(v.."speed", v..sep.."speed", -400, 400, 100, 0, "%")
     params:set_action(v.."speed", function(value) engine.speed(v, value / 100) end)
 
     params:add_taper(v.."jitter", v..sep.."jitter", 0, 500, 0, 5, "ms")
@@ -56,7 +56,7 @@ function init()
     params:add_taper(v.."density", v..sep.."density", 0, 512, 20, 6, "hz")
     params:set_action(v.."density", function(value) engine.density(v, value) end)
 
-    params:add_taper(v.."pitch", v..sep.."pitch", -24, 24, 0, 0, "st")
+    params:add_taper(v.."pitch", v..sep.."pitch", -48, 48, 0, 0, "st")
     params:set_action(v.."pitch", function(value) engine.pitch(v, math.pow(0.5, -value / 12)) end)
 
     params:add_taper(v.."spread", v..sep.."spread", 0, 100, 0, 0, "%")
